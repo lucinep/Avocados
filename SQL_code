@@ -1,0 +1,44 @@
+#Scenario: You are a BI analyst for a grocery store chain that monitors dietary trends affecting in-store purchases. Your company wants you to examine which types of Hass avocados are purchased most often. The avocados are categorized as one of four sizes: small, medium, large, and extra large. In addition to the average price and total volume of each avocado, the date of each sale is also recorded. 
+#Using this data, you will create a historical table that illustrates how indexes and partitions work. This will allow you to practice creating partitions and clustered tables and demonstrate how to use them.
+
+#Your goal is to use partitions and clusters to answer the following question: What is the distribution of avocado sales from 2015 to 2021?
+
+#We will be using SQL and the avocados dataset you can find within this repository.
+
+#To begin, create a new table without a partition or cluster. This will serve as a baseline to compare to the partitioned and clustered tables. Let's name it avocados.
+
+CREATE TABLE
+   `mydataset.avocados`
+AS (
+   SELECT
+        *
+   FROM `mydataset.avocado_base`
+);
+
+#Next, let's create a table partitioned by an integer range (the years 2015 through 2022). Name it avocados_partitioned.
+
+CREATE TABLE
+   `mydataset.avocados_partitioned`
+PARTITION BY
+    RANGE_BUCKET(Year, GENERATE_ARRAY(2015,2022,1))
+AS (
+   SELECT
+        *
+   FROM `mydataset.avocado_base`
+);
+
+#Lastly, create a table partitioned by an integer range and clustered by type. Name it avocados_clustered.
+
+CREATE TABLE
+   `mydataset.avocados_clustered`
+PARTITION BY
+   RANGE_BUCKET(Year, GENERATE_ARRAY(2015,2022,1))
+CLUSTER BY
+   type
+AS (
+   SELECT
+       *
+   FROM `mydataset.avocado_base`
+);
+
+
